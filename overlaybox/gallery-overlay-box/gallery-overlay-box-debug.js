@@ -9,10 +9,10 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
         var container, originalNode, closeButton, greyOverlay;
 
         //Setting up the container
-        container = Y.Node.create('<div class="overlaybox overlaybox-hidden"></div>');
+        container = Y.Node.create('<div class="yui3-overlaybox yui3-overlaybox-hidden"></div>');
         if (! config.container) {
             //No container is given so it should be an ajax overlaybox
-            closeButton = Y.Node.create('<div class="overlaybox_close_button"></div>');
+            closeButton = Y.Node.create('<div class="yui3-overlaybox-close-button"></div>');
             closeButton.on('click', function (event) {
                 event.halt();
                 this.hide();
@@ -28,7 +28,7 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
             //Loadstuff from the given container into a more awesome one
             originalNode = Y.one('#' + config.container);
             container.insert(originalNode.cloneNode(true), 'replace');
-            container.get('firstChild').removeClass('overlaybox-hidden');
+            container.get('firstChild').removeClass('yui3-overlaybox-hidden');
             originalNode.remove();
             this._set('loadedContent', true);
         }
@@ -37,7 +37,7 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
 
         //Setup the overlay
         if (! config.greyOverlay) {
-            greyOverlay = Y.Node.create('<div class="overlaybox_mask overlaybox-hidden"></div>');
+            greyOverlay = Y.Node.create('<div class="yui3-overlaybox-mask yui3-overlaybox-hidden"></div>');
             greyOverlay.on('click', this.hide, this);
             Y.one(document.body).append(greyOverlay);
             this.set('greyOverlay', greyOverlay);
@@ -75,20 +75,20 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
             this._set('loadedContent', true);
         }
         if (this.get('toggleHidden')) {
-            this.get('container').removeClass('overlaybox-hidden');
+            this.get('container').removeClass('yui3-overlaybox-hidden');
         }
 
         if (Y.Lang.isUndefined(overlay)) {
             overlay = new Y.Overlay({
                 srcNode: this.get('container'),
-                zIndex: 99,
+                zIndex: this.get('zIndex'),
                 centered: true,
                 plugins: [ Y.Plugin.OverlayKeepaligned ]
             });
             overlay.render();
             this.set('overlay', overlay);
         }
-        this.get('greyOverlay').removeClass('overlaybox-hidden');
+        this.get('greyOverlay').removeClass('yui3-overlaybox-hidden');
         overlay.show();
     },
 
@@ -99,9 +99,9 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
      */
     hide: function () {
         if (this.get('toggleHidden')) {
-            this.get('container').addClass('overlaybox-hidden');
+            this.get('container').addClass('yui3-overlaybox-hidden');
         }
-        this.get('greyOverlay').addClass('overlaybox-hidden');
+        this.get('greyOverlay').addClass('yui3-overlaybox-hidden');
         if (this.get('overlay')) {
             this.get('overlay').hide();
         }
@@ -169,9 +169,13 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
         },
         overlay: {
             writeOnce: true
+        },
+        zIndex: {
+            writeOnce: 'initOnly',
+            value: 99
         }
     }
 });
 
 
-}, '@VERSION@' ,{requires:['base', 'node-base', 'gallery-overlay-extras', 'gallery-dispatcher']});
+}, '@VERSION@' ,{requires:['base', 'node-base', 'gallery-overlay-extras', 'gallery-dispatcher'], skinnable:true});
