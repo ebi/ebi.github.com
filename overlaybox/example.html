@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Tobias 'ebi' Ebnöther's Examples</title>
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssbase/base-min.css">
+        <link rel="stylesheet" type="text/css" href="gallery-overlay-box/assets/gallery-overlay-box-core.css">
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script>
+        <script type="text/javascript" src="gallery-overlay-box/gallery-overlay-box.js"></script>
+    </head>
+    <body>
+        <div>
+            <h1>DOM Example</h1>
+            <a href="#" id="loadDomOverlay">Overlay Box that loads content from the DOM</a>
+            <div id="hiddenContainer" class="overlaybox-hidden">This is some content which can be loaded in the overlay box.</div>
+        </div>
+        <div>
+            <h1>AJAX Example</h1>
+            <a href="overlaybox-content.html" id="loadAjaxOverlay">Overlay Box that loads content by Ajax</a>
+        </div>
+        <script type="text/javascript">
+            YUI().use('node', 'event', 'gallery-overlay-box', function (Y) {
+                var domBox = new Y.OverlayBox({ container: 'hiddenContainer' });
+                domBox.bindClick(Y.one('#loadDomOverlay'));
+
+                var urlBox = new Y.OverlayBox({ url: 'overlaybox-content.html' });
+                urlBox.bindClick(Y.one('#loadAjaxOverlay'));
+            });
+        </script>
+    </body>
+</html>
