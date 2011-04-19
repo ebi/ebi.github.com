@@ -66,10 +66,14 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
         var overlay, dispatcher;
         overlay = this.get('overlay');
         if (false === this.get('loadedContent')) {
+            this.get('container').addClass('yui3-overlaybox-invisible'); //Used to prevent refresh flickering
             dispatcher = new Y.Dispatcher({
                 node: this.get('container').one('.content')
             });
-            dispatcher.on('ready', this.refresh, this);
+            dispatcher.on('ready', function () {
+                this.refresh();
+                this.get('container').removeClass('yui3-overlaybox-invisible');
+            }, this);
             dispatcher.set('uri', this.get('url'));
             this._set('loadedContent', true);
         }

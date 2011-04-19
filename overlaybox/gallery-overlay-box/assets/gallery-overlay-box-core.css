@@ -14,6 +14,10 @@
     height: 100%;
 }
 
+.yui3-overlaybox-invisible {
+    visibility: hidden;
+}
+
 .yui3-overlaybox-hidden {
     display: none;
 }
