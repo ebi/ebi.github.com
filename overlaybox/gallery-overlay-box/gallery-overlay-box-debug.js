@@ -85,7 +85,7 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
             overlay = new Y.Overlay({
                 srcNode: this.get('container'),
                 zIndex: this.get('zIndex'),
-                centered: this.get('greyOverlay'),
+                centered: this.get('centered'),
                 plugins: [ Y.Plugin.OverlayKeepaligned ]
             });
             overlay.render();
@@ -203,6 +203,9 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
         },
         keyHandle: {
             readOnly: true
+        },
+        centered: {
+            value: true
         }
     }
 });
