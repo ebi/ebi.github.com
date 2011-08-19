@@ -42,6 +42,8 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
             Y.one(document.body).append(greyOverlay);
             this.set('greyOverlay', greyOverlay);
         }
+
+        Y.on('windowresize', function () { Y.later(100, this, this.refresh); }, this);
     },
 
     destructor: function () {
@@ -64,17 +66,14 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
     * @return void
     */
     show: function () {
-        var overlay, dispatcher;
+        var overlay, dispatcher, handle;
         overlay = this.get('overlay');
-        if (false === this.get('loadedContent')) {
+        if (false === this.get('loadedContent') || true === this.get('reload')) {
             this.get('container').addClass('yui3-overlaybox-invisible'); //Used to prevent refresh flickering
             dispatcher = new Y.Dispatcher({
                 node: this.get('container').one('.content')
             });
-            dispatcher.on('ready', function () {
-                this.refresh();
-                this.get('container').removeClass('yui3-overlaybox-invisible');
-            }, this);
+            dispatcher.on('ready', this._showAfterDispatch, this);
             dispatcher.set('uri', this.get('url'));
             this._set('loadedContent', true);
         }
@@ -86,14 +85,34 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
             overlay = new Y.Overlay({
                 srcNode: this.get('container'),
                 zIndex: this.get('zIndex'),
-                centered: true,
+                centered: this.get('greyOverlay'),
                 plugins: [ Y.Plugin.OverlayKeepaligned ]
             });
             overlay.render();
             this.set('overlay', overlay);
         }
         this.get('greyOverlay').removeClass('yui3-overlaybox-hidden');
+
+        handle = Y.one(document).on('keypress', function (event) {
+            if (27 === event.keyCode) { //Escape
+                event.halt();
+                this.hide();
+            }
+        }, this);
+        this._set('keyHandle', handle);
+
         overlay.show();
+        this.refresh();
+    },
+
+    /**
+     * Refreshs  and shows the overlay-box after it got dispatched.
+     *
+     * @return void
+     */
+    _showAfterDispatch: function () {
+        this.refresh();
+        this.get('container').removeClass('yui3-overlaybox-invisible');
     },
 
     /**
@@ -108,6 +127,10 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
         this.get('greyOverlay').addClass('yui3-overlaybox-hidden');
         if (this.get('overlay')) {
             this.get('overlay').hide();
+        }
+
+        if (this.get('keyHandle')) {
+            this.get('keyHandle').detach();
         }
     },
 
@@ -177,9 +200,12 @@ Y.OverlayBox = Y.Base.create(OVERLAYBOX, Y.Base, [], {
         zIndex: {
             writeOnce: 'initOnly',
             value: 99
+        },
+        keyHandle: {
+            readOnly: true
         }
     }
 });
 
 
-}, '@VERSION@' ,{requires:['base', 'node-base', 'gallery-overlay-extras', 'gallery-dispatcher'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['base', 'node-base', 'gallery-overlay-extras', 'gallery-dispatcher', 'event-resize']});
